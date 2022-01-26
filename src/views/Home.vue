@@ -75,6 +75,7 @@
 
 <script>
 // @ is an alias to /src
+import { mapActions } from "vuex";
 
 export default {
   name: "Home",
@@ -85,7 +86,12 @@ export default {
       showServiceFor: [],
     };
   },
+  mounted() {
+    this.initStore();
+    // console.log(this.$store.state);
+  },
   methods: {
+    ...mapActions(["initStore"]),
     showBack(index) {
       this.showServiceFor.push(index);
     },
