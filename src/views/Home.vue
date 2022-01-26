@@ -2,8 +2,19 @@
   <div class="history">
     <h1 class="header">History</h1>
     <div class="vehicle-box-container">
-      <div class="vehicle-box">
-        <div class="vehicle-box__side vehicle-box__side--front">
+      <div
+        v-for="(vehicle, index) in vehicles"
+        :key="index"
+        class="vehicle-box"
+      >
+        <div
+          class="vehicle-box__side"
+          :class="[
+            isFrontSideShowing(index)
+              ? 'vehicle-box__side--front-intial'
+              : 'vehicle-box__side--front-rotate',
+          ]"
+        >
           <div>Make:</div>
           <div>Year:</div>
           <div>Model:</div>
@@ -13,9 +24,18 @@
           <div>VehicleNotes:</div>
           <div>PurchasedFrom:</div>
           <div>PricePaid:</div>
+          <button @click="showBack(index)">See Services</button>
         </div>
-        <div class="vehicle-box__side vehicle-box__side--back">
+        <div
+          class="vehicle-box__side"
+          :class="[
+            isFrontSideShowing(index)
+              ? 'vehicle-box__side--back-intial'
+              : 'vehicle-box__side--back-rotate',
+          ]"
+        >
           <div class="vehicle-service-container">
+            <button @click="showFront(index)">Show Vehicle Details</button>
             <div class="vehicle-service-box">
               <div>Make:</div>
               <div>VehicleId:</div>
@@ -34,116 +54,6 @@
               <div>ServiceDates:</div>
               <div>ServiceNotes:</div>
             </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="vehicle-box">
-        <div class="vehicle-box__side vehicle-box__side--front">
-          <div>Make:</div>
-          <div>Year:</div>
-          <div>Model:</div>
-          <div>Owner:</div>
-          <div>DateAcquired:</div>
-          <div>DateAcquired:</div>
-          <div>VehicleNotes:</div>
-          <div>PurchasedFrom:</div>
-          <div>PricePaid:</div>
-        </div>
-        <div class="vehicle-box__side vehicle-box__side--back">
-          <div class="vehicle-service-container">
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="vehicle-box">
-        <div class="vehicle-box__side vehicle-box__side--front">
-          <div>Make:</div>
-          <div>Year:</div>
-          <div>Model:</div>
-          <div>Owner:</div>
-          <div>DateAcquired:</div>
-          <div>DateAcquired:</div>
-          <div>VehicleNotes:</div>
-          <div>PurchasedFrom:</div>
-          <div>PricePaid:</div>
-        </div>
-        <div class="vehicle-box__side vehicle-box__side--back">
-          <div class="vehicle-service-container">
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="vehicle-box">
-        <div class="vehicle-box__side vehicle-box__side--front">
-          <div>Make:</div>
-          <div>Year:</div>
-          <div>Model:</div>
-          <div>Owner:</div>
-          <div>DateAcquired:</div>
-          <div>DateAcquired:</div>
-          <div>VehicleNotes:</div>
-          <div>PurchasedFrom:</div>
-          <div>PricePaid:</div>
-        </div>
-        <div class="vehicle-box__side vehicle-box__side--back">
-          <div class="vehicle-service-container">
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="vehicle-box">
-        <div class="vehicle-box__side vehicle-box__side--front">
-          <div>Make:</div>
-          <div>Year:</div>
-          <div>Model:</div>
-          <div>Owner:</div>
-          <div>DateAcquired:</div>
-          <div>DateAcquired:</div>
-          <div>VehicleNotes:</div>
-          <div>PurchasedFrom:</div>
-          <div>PricePaid:</div>
-        </div>
-        <div class="vehicle-box__side vehicle-box__side--back">
-          <div class="vehicle-service-container">
             <div class="vehicle-service-box">
               <div>Make:</div>
               <div>VehicleId:</div>
@@ -171,7 +81,20 @@ export default {
   data() {
     return {
       history: [],
+      vehicles: [1],
+      showServiceFor: [],
     };
+  },
+  methods: {
+    showBack(index) {
+      this.showServiceFor.push(index);
+    },
+    showFront(index) {
+      this.showServiceFor = this.showServiceFor.filter((i) => i !== index);
+    },
+    isFrontSideShowing(index) {
+      return !this.showServiceFor.includes(index);
+    },
   },
 };
 </script>
@@ -204,6 +127,7 @@ export default {
 .vehicle-box-container::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
 .vehicle-service-container {
   padding: 2px;
   width: 280px;
@@ -220,6 +144,7 @@ export default {
 .vehicle-service-container::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
 .vehicle-service-box {
   width: 250px;
   height: 180px;
@@ -237,31 +162,32 @@ export default {
   position: relative;
   perspective: 150rem;
   outline: 1px solid #88c0d0;
+}
 
-  &__side {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 300px;
-    overflow: hidden;
-    position: absolute;
-    transition: all 0.8s;
-    backface-visibility: hidden;
+.vehicle-box__side {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  position: absolute;
+  transition: all 0.8s;
+  backface-visibility: hidden;
+}
 
-    &--front {
-      background: #4c566a;
-    }
-    &--back {
-      background: #5e81ac;
-      transform: rotateX(180deg);
-    }
-  }
+.vehicle-box__side--front-intial {
+  background: #4c566a;
+}
 
-  &:hover &__side--front {
-    transform: rotateX(180deg);
-  }
-  &:hover &__side--back {
-    transform: rotateX(0);
-  }
+.vehicle-box__side--back-intial {
+  background: #5e81ac;
+  transform: rotateX(180deg);
+}
+
+.vehicle-box__side--front-rotate {
+  transform: rotateX(180deg);
+}
+.vehicle-box__side--back-rotate {
+  transform: rotateX(0);
 }
 </style>
