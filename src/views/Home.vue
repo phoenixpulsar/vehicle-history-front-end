@@ -75,7 +75,7 @@
 
 <script>
 // @ is an alias to /src
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "Home",
@@ -84,11 +84,29 @@ export default {
       history: [],
       vehicles: [1],
       showServiceFor: [],
+      myPerfectStructure: [
+        {
+          id: "VEWEWEET",
+        },
+      ],
     };
   },
   mounted() {
     this.initStore();
     // console.log(this.$store.state);
+  },
+  watch: {
+    contractState: {
+      handler(val) {
+        console.log("in watcher", val);
+      },
+    },
+  },
+  computed: {
+    ...mapGetters(["GET_CONTRACT_STATE"]),
+    contractState() {
+      return this.GET_CONTRACT_STATE;
+    },
   },
   methods: {
     ...mapActions(["initStore"]),

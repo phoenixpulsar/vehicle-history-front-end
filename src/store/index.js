@@ -19,6 +19,11 @@ export default createStore({
       state.nearConfig = nearConfig;
     },
   },
+  getters: {
+    GET_CONTRACT_STATE: (state) => {
+      return state.accountState;
+    },
+  },
   actions: {
     _setConfig: ({ commit }) => {
       try {
@@ -50,13 +55,45 @@ export default createStore({
           account_id: state.nearConfig.contractName,
           request_type: "view_state",
         });
+
+        // Decode
         let storage = {};
         response.values.forEach((v) => {
           let decodedKey = atob(v.key);
           let decodedVal = atob(v.value);
           storage[decodedKey] = JSON.parse(decodedVal);
         });
-        commit("SET_ACCOUNT_STATE", storage);
+
+        // Data Structures
+        let vehicles = [];
+        let services = [];
+
+        // Populate Data Structures
+        for (const [key, value] of Object.entries(storage)) {
+          if (key.startsWith("v:")) {
+            let vehicleToAdd = {
+              fullid: key,
+              ...value,
+            };
+            vehicles.push(vehicleToAdd);
+          }
+          if (key.startsWith("vs:")) {
+            let serviceToAdd = {
+              fullid: key,
+              ...value,
+            };
+            services.push(serviceToAdd);
+          }
+        }
+
+        // Create object to store
+        let accountState = {
+          vehicles: vehicles,
+          services: services,
+        };
+
+        // Update Vuex State
+        commit("SET_ACCOUNT_STATE", accountState);
       } catch (error) {
         console.error("Error connecting to NEAR", error);
       }
