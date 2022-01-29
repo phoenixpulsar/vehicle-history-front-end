@@ -3,7 +3,7 @@
     <h1 class="header">History</h1>
     <div class="vehicle-box-container">
       <div
-        v-for="(vehicle, index) in vehicles"
+        v-for="(vehicle, index) in contractState.vehicles"
         :key="index"
         class="vehicle-box"
       >
@@ -15,15 +15,15 @@
               : 'vehicle-box__side--front-rotate',
           ]"
         >
-          <div>Make:</div>
-          <div>Year:</div>
-          <div>Model:</div>
-          <div>Owner:</div>
-          <div>DateAcquired:</div>
-          <div>DateAcquired:</div>
-          <div>VehicleNotes:</div>
-          <div>PurchasedFrom:</div>
-          <div>PricePaid:</div>
+          <div>Make: {{ vehicle.make }}</div>
+          <div>Year: {{ vehicle.year }}</div>
+          <div>Model: {{ vehicle.model }}</div>
+          <div>Owner: {{ vehicle.owner }}</div>
+          <div>DateAcquired: {{ vehicle.dateAcquired }}</div>
+          <div>VehicleNotes: {{ vehicle.notes }}</div>
+          <div>Owner: {{ vehicle.owner }}</div>
+          <div>PurchasedFrom: ---</div>
+          <div>PricePaid: ---</div>
           <button @click="showBack(index)">See Services</button>
         </div>
         <div
@@ -36,35 +36,18 @@
         >
           <div class="vehicle-service-container">
             <button @click="showFront(index)">Show Vehicle Details</button>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
-            </div>
-            <div class="vehicle-service-box">
-              <div>Make:</div>
-              <div>VehicleId:</div>
-              <div>ServiceDates:</div>
-              <div>ServiceNotes:</div>
+
+            <!-- could optimize here and just fetch service if user clicks see services -->
+            <div
+              v-for="(service, index) in getServices(vehicle.serviceIds)"
+              :key="index"
+              class="vehicle-service-box"
+            >
+              <div>fullid: {{ service.fullid }}</div>
+              <div>vehicleid: {{ service.vehicleId }}</div>
+              <div>id: {{ service.id }}</div>
+              <div>ServiceDates: {{ service.serviceDate }}</div>
+              <div>ServiceNotes: {{ service.serviceNotes }}</div>
             </div>
           </div>
         </div>
@@ -83,12 +66,8 @@ export default {
     return {
       history: [],
       vehicles: [1],
+      services: [],
       showServiceFor: [],
-      myPerfectStructure: [
-        {
-          id: "VEWEWEET",
-        },
-      ],
     };
   },
   mounted() {
@@ -118,6 +97,16 @@ export default {
     },
     isFrontSideShowing(index) {
       return !this.showServiceFor.includes(index);
+    },
+    getServices(serviceIds = []) {
+      let vehicleServices = [];
+      serviceIds.forEach((id) => {
+        let service = this.contractState.services
+          .filter((service) => service.id === id)
+          .pop();
+        vehicleServices.push(service);
+      });
+      return vehicleServices;
     },
   },
 };

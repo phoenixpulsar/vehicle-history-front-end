@@ -5,7 +5,10 @@ import * as nearAPI from "near-api-js";
 export default createStore({
   state: {
     nearConfig: null,
-    accountState: null,
+    accountState: {
+      vehicles: [],
+      services: [],
+    },
     nearConnection: null,
   },
   mutations: {
