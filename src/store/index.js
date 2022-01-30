@@ -50,8 +50,9 @@ export default createStore({
         console.error("Error connecting to NEAR", error);
       }
     },
-    _fetchStorage: async ({ commit, state }) => {
+    _fetchState: async ({ commit, state }) => {
       try {
+        // Fetch State
         const response = await state.nearConnection.connection.provider.query({
           prefix_base64: "",
           finality: "final",
@@ -105,7 +106,7 @@ export default createStore({
       console.log("Init Store In progres...");
       dispatch("_setConfig");
       await dispatch("_connectToNear");
-      await dispatch("_fetchStorage");
+      await dispatch("_fetchState");
     },
   },
   modules: {},
