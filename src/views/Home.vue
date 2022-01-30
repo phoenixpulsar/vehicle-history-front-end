@@ -15,16 +15,8 @@
               : 'vehicle-box__side--front-rotate',
           ]"
         >
-          <div>Make: {{ vehicle.make }}</div>
-          <div>Year: {{ vehicle.year }}</div>
-          <div>Model: {{ vehicle.model }}</div>
-          <div>Owner: {{ vehicle.owner }}</div>
-          <div>DateAcquired: {{ vehicle.dateAcquired }}</div>
-          <div>VehicleNotes: {{ vehicle.notes }}</div>
-          <div>Owner: {{ vehicle.owner }}</div>
-          <div>PurchasedFrom: ---</div>
-          <div>PricePaid: ---</div>
-          <button @click="showBack(index)">See Services</button>
+          <button class="btn" @click="showBack(index)">See Services</button>
+          <Vehicle :vehicle="vehicle"></Vehicle>
         </div>
         <div
           class="vehicle-box__side"
@@ -35,19 +27,18 @@
           ]"
         >
           <div class="vehicle-service-container">
-            <button @click="showFront(index)">Show Vehicle Details</button>
-
             <!-- could optimize here and just fetch service if user clicks see services -->
+            <div class="vehicle-service-ctrls">
+              <button class="btn" @click="showFront(index)">
+                Show Vehicle Details
+              </button>
+            </div>
             <div
               v-for="(service, index) in getServices(vehicle.serviceIds)"
               :key="index"
               class="vehicle-service-box"
             >
-              <div>fullid: {{ service.fullid }}</div>
-              <div>vehicleid: {{ service.vehicleId }}</div>
-              <div>id: {{ service.id }}</div>
-              <div>ServiceDates: {{ service.serviceDate }}</div>
-              <div>ServiceNotes: {{ service.serviceNotes }}</div>
+              <VehicleService :service="service"></VehicleService>
             </div>
           </div>
         </div>
@@ -59,9 +50,12 @@
 <script>
 // @ is an alias to /src
 import { mapActions, mapGetters } from "vuex";
+import Vehicle from "@/components/Vehicle.vue";
+import VehicleService from "@/components/VehicleService.vue";
 
 export default {
   name: "Home",
+  components: { Vehicle, VehicleService },
   data() {
     return {
       history: [],
@@ -75,11 +69,11 @@ export default {
     // console.log(this.$store.state);
   },
   watch: {
-    contractState: {
-      handler(val) {
-        console.log("in watcher", val);
-      },
-    },
+    // contractState: {
+    //   // handler(val) {
+    //     // console.log("in watcher", val);
+    //   // },
+    // },
   },
   computed: {
     ...mapGetters(["GET_CONTRACT_STATE"]),
@@ -158,6 +152,15 @@ export default {
   display: none; /* Safari and Chrome */
 }
 
+.vehicle-box {
+  width: 300px;
+  height: 300px;
+  margin: 10px auto;
+  position: relative;
+  perspective: 150rem;
+  outline: 1px solid #88c0d0;
+}
+
 .vehicle-service-box {
   width: 250px;
   height: 180px;
@@ -168,19 +171,11 @@ export default {
   outline: 1px solid #bf616a;
 }
 
-.vehicle-box {
-  width: 300px;
-  height: 300px;
-  margin: 10px auto;
-  position: relative;
-  perspective: 150rem;
-  outline: 1px solid #88c0d0;
-}
-
 .vehicle-box__side {
   top: 0;
   left: 0;
   width: 100%;
+  padding: 8px;
   height: 300px;
   overflow: hidden;
   position: absolute;
@@ -202,5 +197,18 @@ export default {
 }
 .vehicle-box__side--back-rotate {
   transform: rotateX(0);
+}
+
+.vehicle-service-ctrls {
+  padding: 14px 14px 2px 14px;
+}
+
+.btn {
+  width: 100%;
+  border: none;
+  padding: 10px;
+  color: #2e3440;
+  text-align: center;
+  background: #bf616a;
 }
 </style>
