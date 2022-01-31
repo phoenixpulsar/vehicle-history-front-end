@@ -136,16 +136,14 @@ export default {
 }
 
 .vehicle-service-container {
-  padding: 2px;
   width: 280px;
   height: 280px;
   overflow: hidden;
-  margin: 10px auto;
+  margin: 0px auto;
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
   backface-visibility: hidden;
-  outline: 2px solid #d08770;
 }
 
 .vehicle-service-container::-webkit-scrollbar {
