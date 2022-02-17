@@ -12,6 +12,7 @@ function getConfig(env) {
         contractName: CONTRACT_NAME,
         walletUrl: "https://wallet.testnet.near.org",
         helperUrl: "https://helper.testnet.near.org",
+        explorerUrl: "https://explorer.testnet.near.org",
       };
     default:
       throw Error(

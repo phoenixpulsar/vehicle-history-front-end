@@ -1,6 +1,16 @@
 <template>
   <div class="history">
     <h1 class="header">History</h1>
+    <div class="user-actions" v-if="GET_IS_USER_LOGGED_IN">
+      Welcome, {{ GET_USER_ACCOUNT_DETAILS?.accountId }}
+    </div>
+    <div v-if="!GET_IS_USER_LOGGED_IN" class="user-actions">
+      <button class="btn" @click="signInUsingStore()">Sign In</button>
+    </div>
+    <div v-if="GET_IS_USER_LOGGED_IN" class="user-actions">
+      <button class="btn" @click="signOutUsingStore()">Sign Out</button>
+    </div>
+
     <div class="vehicle-box-container">
       <div
         v-for="(vehicle, index) in contractState.vehicles"
@@ -66,23 +76,21 @@ export default {
   },
   mounted() {
     this.initStore();
-    // console.log(this.$store.state);
   },
-  watch: {
-    // contractState: {
-    //   // handler(val) {
-    //     // console.log("in watcher", val);
-    //   // },
-    // },
-  },
+  watch: {},
   computed: {
-    ...mapGetters(["GET_CONTRACT_STATE"]),
+    ...mapGetters([
+      "GET_CONTRACT_STATE",
+      "GET_WALLET_CONNECTION",
+      "GET_IS_USER_LOGGED_IN",
+      "GET_USER_ACCOUNT_DETAILS",
+    ]),
     contractState() {
       return this.GET_CONTRACT_STATE;
     },
   },
   methods: {
-    ...mapActions(["initStore"]),
+    ...mapActions(["initStore", "signIn", "signOut"]),
     showBack(index) {
       this.showServiceFor.push(index);
     },
@@ -101,6 +109,12 @@ export default {
         vehicleServices.push(service);
       });
       return vehicleServices;
+    },
+    signInUsingStore() {
+      this.signIn();
+    },
+    signOutUsingStore() {
+      this.signOut();
     },
   },
 };
@@ -205,8 +219,15 @@ export default {
   width: 100%;
   border: none;
   padding: 10px;
+  cursor: pointer;
   color: #2e3440;
   text-align: center;
   background: #bf616a;
+}
+
+.user-actions {
+  width: 250px;
+  padding: 5px;
+  margin: 5px auto;
 }
 </style>
