@@ -13,6 +13,8 @@ export default createStore({
     accountDetails: null,
     isUserLoggedIn: false,
     walletConnection: null,
+    contract: null,
+    account: null,
   },
   mutations: {
     SET_NEAR_CONNECTION: (state, nearConnection) => {
@@ -27,6 +29,12 @@ export default createStore({
     SET_WALLET_CONNECTION: (state, walletConnection) => {
       state.walletConnection = walletConnection;
     },
+    SET_CONTRACT: (state, contract) => {
+      state.contract = contract;
+    },
+    SET_ACCOUNT: (state, account) => {
+      state.account = account;
+    },
   },
   getters: {
     GET_CONTRACT_STATE: (state) => {
@@ -40,6 +48,12 @@ export default createStore({
     },
     GET_USER_ACCOUNT_DETAILS: (state) => {
       return state.accountDetails;
+    },
+    GET_CONTRACT: (state) => {
+      return state.contract;
+    },
+    GET_ACCOUNT: (state) => {
+      return state.account;
     },
   },
   actions: {
@@ -125,6 +139,40 @@ export default createStore({
       } catch (error) {
         console.error("Error connecting to NEAR", error);
       }
+    },
+    getContract: async ({ commit, state }) => {
+      let contract = new nearAPI.Contract(
+        state.accountDetails, // the account object that is connecting
+        "dev-1643565458345-58299177709187",
+        {
+          // name of contract you're connecting to
+          viewMethods: [], // view methods do not change state but usually return a value
+          changeMethods: ["addVehicle", "addService"], // change methods modify state
+          sender: state.account, // account object to initialize and sign transactions.
+        }
+      );
+      console.log("setting contract", contract);
+      commit("SET_CONTRACT", contract);
+    },
+    _getAccount: async ({ commit, state }) => {
+      // looks like we don't need this since we already got the account details when
+      // user logged in
+      let account = await state.nearConnection.account("macedo.testnet");
+      console.log("setting account", account);
+      console.log("state account", state.accountDetails);
+      commit("SET_ACCOUNT", account);
+    },
+    addVehicle: async ({ state, dispatch }, vehicleToAdd) => {
+      await state.contract.addVehicle({
+        year: vehicleToAdd.year,
+        make: vehicleToAdd.make,
+        model: vehicleToAdd.model,
+        owner: vehicleToAdd.owner,
+        dateAcquired: vehicleToAdd.dateAcquired,
+        vehicleNotes: vehicleToAdd.vehicleNotes,
+      });
+
+      dispatch("_fetchState");
     },
     getAccountDetails: async ({ state }) => {
       state.accountDetails = await state.walletConnection.account();

@@ -10,6 +10,19 @@
     <div v-if="GET_IS_USER_LOGGED_IN" class="user-actions">
       <button class="btn" @click="signOutUsingStore()">Sign Out</button>
     </div>
+    <div
+      v-if="
+        GET_IS_USER_LOGGED_IN &&
+        GET_USER_ACCOUNT_DETAILS?.accountId === 'macedo.testnet'
+      "
+      class="user-actions"
+    >
+      <button class="btn" @click="showVehicleForm()">Add Vehicle</button>
+    </div>
+
+    <div v-if="displayVehicleForm" class="vehicle-form">
+      <AddVehicleForm />
+    </div>
 
     <div class="vehicle-box-container">
       <div
@@ -62,16 +75,18 @@
 import { mapActions, mapGetters } from "vuex";
 import Vehicle from "@/components/Vehicle.vue";
 import VehicleService from "@/components/VehicleService.vue";
+import AddVehicleForm from "@/components/AddVehicleForm.vue";
 
 export default {
   name: "Home",
-  components: { Vehicle, VehicleService },
+  components: { Vehicle, VehicleService, AddVehicleForm },
   data() {
     return {
       history: [],
       vehicles: [1],
       services: [],
       showServiceFor: [],
+      displayVehicleForm: false,
     };
   },
   mounted() {
@@ -90,7 +105,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["initStore", "signIn", "signOut"]),
+    ...mapActions(["initStore", "signIn", "signOut", "getContract"]),
     showBack(index) {
       this.showServiceFor.push(index);
     },
@@ -109,6 +124,12 @@ export default {
         vehicleServices.push(service);
       });
       return vehicleServices;
+    },
+    showVehicleForm() {
+      console.log("show vehicle form");
+      this.displayVehicleForm = true;
+      console.log("on home, getting contract");
+      this.getContract();
     },
     signInUsingStore() {
       this.signIn();
@@ -131,6 +152,22 @@ export default {
 .header-2 {
   text-align: center;
   font-size: 18px;
+}
+
+.vehicle-form {
+  width: 320px;
+  padding: 2px;
+  height: 80vh;
+  overflow: hidden;
+  margin: 10px auto;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  outline: 2px solid lightsalmon;
+}
+
+.vehicle-form::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .vehicle-box-container {
@@ -213,16 +250,6 @@ export default {
 
 .vehicle-service-ctrls {
   padding: 14px 14px 2px 14px;
-}
-
-.btn {
-  width: 100%;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  color: #2e3440;
-  text-align: center;
-  background: #bf616a;
 }
 
 .user-actions {
