@@ -55,6 +55,15 @@
               <button class="btn" @click="showFront(index)">
                 Show Vehicle Details
               </button>
+
+              <div
+                v-if="
+                  GET_IS_USER_LOGGED_IN &&
+                  GET_USER_ACCOUNT_DETAILS?.accountId === 'macedo.testnet'
+                "
+              >
+                <AddServiceForm :vehicleId="vehicle.id" />
+              </div>
             </div>
             <div
               v-for="(service, index) in getServices(vehicle.serviceIds)"
@@ -76,10 +85,11 @@ import { mapActions, mapGetters } from "vuex";
 import Vehicle from "@/components/Vehicle.vue";
 import VehicleService from "@/components/VehicleService.vue";
 import AddVehicleForm from "@/components/AddVehicleForm.vue";
+import AddServiceForm from "@/components/AddServiceForm.vue";
 
 export default {
   name: "Home",
-  components: { Vehicle, VehicleService, AddVehicleForm },
+  components: { Vehicle, VehicleService, AddVehicleForm, AddServiceForm },
   data() {
     return {
       history: [],
@@ -87,6 +97,7 @@ export default {
       services: [],
       showServiceFor: [],
       displayVehicleForm: false,
+      displayServiceForm: false,
     };
   },
   mounted() {
@@ -126,10 +137,11 @@ export default {
       return vehicleServices;
     },
     showVehicleForm() {
-      console.log("show vehicle form");
       this.displayVehicleForm = true;
-      console.log("on home, getting contract");
       this.getContract();
+    },
+    showServiceForm() {
+      this.displayServiceForm = true;
     },
     signInUsingStore() {
       this.signIn();
@@ -167,6 +179,22 @@ export default {
 }
 
 .vehicle-form::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.service-form {
+  width: 250px;
+  padding: 2px;
+  height: 70px;
+  overflow: hidden;
+  /* margin: 0 auto; */
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  outline: 2px solid lightsalmon;
+}
+
+.service-form::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
 

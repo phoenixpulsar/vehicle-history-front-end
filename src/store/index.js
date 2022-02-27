@@ -174,6 +174,18 @@ export default createStore({
 
       dispatch("_fetchState");
     },
+    addService: async ({ state, dispatch }, serviceToAdd) => {
+      if (state.contract === null) {
+        await dispatch("getContract");
+      }
+      await state.contract.addService({
+        vehicleId: serviceToAdd.vehicleId,
+        serviceDate: serviceToAdd.serviceDate,
+        serviceNotes: serviceToAdd.serviceNotes,
+      });
+
+      dispatch("_fetchState");
+    },
     getAccountDetails: async ({ state }) => {
       state.accountDetails = await state.walletConnection.account();
     },
