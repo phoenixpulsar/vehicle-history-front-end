@@ -7,9 +7,6 @@
       <div>Owner:</div>
       <div>DateAcquired:</div>
       <div>VehicleNotes:</div>
-      <div>Owner:</div>
-      <div>PurchasedFrom:</div>
-      <div>PricePaid:</div>
     </div>
     <div class="right-column">
       <div>{{ vehicle.make }}</div>
@@ -18,9 +15,6 @@
       <div>{{ vehicle.owner }}</div>
       <div>{{ vehicle.dateAcquired }}</div>
       <div>{{ vehicle.vehicleNotes }}</div>
-      <div>{{ vehicle.owner }}</div>
-      <div>---</div>
-      <div>---</div>
     </div>
   </div>
 </template>

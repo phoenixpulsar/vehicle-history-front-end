@@ -7,7 +7,6 @@
       <div>Owner:</div>
       <div>DateAcquired:</div>
       <div>VehicleNotes:</div>
-      <div>Owner:</div>
     </div>
     <div class="right-column">
       <div>
@@ -45,8 +44,8 @@ export default {
       year: "",
       model: "",
       owner: "",
-      dateAcquired: "",
       vehicleNotes: "",
+      dateAcquired: "",
     };
   },
   methods: {
@@ -57,8 +56,8 @@ export default {
         year: this.year,
         model: this.model,
         owner: this.owner,
-        dateAcquired: this.dateAcquired,
         vehicleNotes: this.vehicleNotes,
+        dateAcquired: this.dateAcquired,
       };
       this.addVehicle(vehicleToAdd);
     },

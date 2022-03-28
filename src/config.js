@@ -1,9 +1,9 @@
 const CONTRACT_NAME =
-  process.env.CONTRACT_NAME || "dev-1643565458345-58299177709187";
+  // process.env.CONTRACT_NAME || "dev-1643565458345-58299177709187";
+  process.env.CONTRACT_NAME || "vg2.macedotrashcan.testnet";
 
 function getConfig(env) {
   switch (env) {
-    case "production":
     case "development":
     case "testnet":
       return {

@@ -13,7 +13,7 @@
     <div
       v-if="
         GET_IS_USER_LOGGED_IN &&
-        GET_USER_ACCOUNT_DETAILS?.accountId === 'macedo.testnet'
+        GET_USER_ACCOUNT_DETAILS?.accountId === 'phoenixpulsar.testnet'
       "
       class="user-actions"
     >
@@ -40,6 +40,12 @@
         >
           <button class="btn" @click="showBack(index)">See Services</button>
           <Vehicle :vehicle="vehicle"></Vehicle>
+
+          <EditVehicleForm :vehicle="vehicle"></EditVehicleForm>
+
+          <button class="btn" @click="callDeleteVehicle(vehicle)">
+            Delete Vehicle
+          </button>
         </div>
         <div
           class="vehicle-box__side"
@@ -59,18 +65,25 @@
               <div
                 v-if="
                   GET_IS_USER_LOGGED_IN &&
-                  GET_USER_ACCOUNT_DETAILS?.accountId === 'macedo.testnet'
+                  GET_USER_ACCOUNT_DETAILS?.accountId ===
+                    'phoenixpulsar.testnet'
                 "
               >
                 <AddServiceForm :vehicleId="vehicle.id" />
               </div>
             </div>
             <div
-              v-for="(service, index) in getServices(vehicle.serviceIds)"
+              v-for="(service, index) in getServices(vehicle.id)"
               :key="index"
               class="vehicle-service-box"
             >
               <VehicleService :service="service"></VehicleService>
+              <EditVehicleServiceForm
+                :service="service"
+              ></EditVehicleServiceForm>
+              <button class="btn" @click="callDeleteService(service)">
+                Delete Service
+              </button>
             </div>
           </div>
         </div>
@@ -86,10 +99,19 @@ import Vehicle from "@/components/Vehicle.vue";
 import VehicleService from "@/components/VehicleService.vue";
 import AddVehicleForm from "@/components/AddVehicleForm.vue";
 import AddServiceForm from "@/components/AddServiceForm.vue";
+import EditVehicleForm from "@/components/EditVehicleForm.vue";
+import EditVehicleServiceForm from "@/components/EditVehicleServiceForm.vue";
 
 export default {
   name: "Home",
-  components: { Vehicle, VehicleService, AddVehicleForm, AddServiceForm },
+  components: {
+    Vehicle,
+    VehicleService,
+    AddVehicleForm,
+    AddServiceForm,
+    EditVehicleForm,
+    EditVehicleServiceForm,
+  },
   data() {
     return {
       history: [],
@@ -116,7 +138,14 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["initStore", "signIn", "signOut", "getContract"]),
+    ...mapActions([
+      "initStore",
+      "signIn",
+      "signOut",
+      "getContract",
+      "deleteVehicle",
+      "deleteService",
+    ]),
     showBack(index) {
       this.showServiceFor.push(index);
     },
@@ -126,15 +155,12 @@ export default {
     isFrontSideShowing(index) {
       return !this.showServiceFor.includes(index);
     },
-    getServices(serviceIds = []) {
-      let vehicleServices = [];
-      serviceIds.forEach((id) => {
-        let service = this.contractState.services
-          .filter((service) => service.id === id)
-          .pop();
-        vehicleServices.push(service);
+    getServices(vehicleId) {
+      return this.contractState.services.filter((s) => {
+        if (s.vehicleId === vehicleId) {
+          return s;
+        }
       });
-      return vehicleServices;
     },
     showVehicleForm() {
       this.displayVehicleForm = true;
@@ -142,6 +168,14 @@ export default {
     },
     showServiceForm() {
       this.displayServiceForm = true;
+    },
+    callDeleteVehicle(vehicle) {
+      console.log("delete vehicle", vehicle);
+      this.deleteVehicle(vehicle);
+    },
+    callDeleteService(service) {
+      console.log("delete service", service);
+      this.deleteService(service);
     },
     signInUsingStore() {
       this.signIn();
@@ -169,7 +203,7 @@ export default {
 .vehicle-form {
   width: 320px;
   padding: 2px;
-  height: 80vh;
+  height: 30vh;
   overflow: hidden;
   margin: 10px auto;
   overflow-y: scroll;
@@ -185,7 +219,7 @@ export default {
 .service-form {
   width: 250px;
   padding: 2px;
-  height: 70px;
+  height: 180px;
   overflow: hidden;
   /* margin: 0 auto; */
   overflow-y: scroll;
@@ -201,7 +235,7 @@ export default {
 .vehicle-box-container {
   width: 320px;
   padding: 2px;
-  height: 80vh;
+  height: 60vh;
   overflow: hidden;
   margin: 10px auto;
   overflow-y: scroll;
@@ -216,7 +250,7 @@ export default {
 
 .vehicle-service-container {
   width: 280px;
-  height: 280px;
+  height: 500px;
   overflow: hidden;
   margin: 0px auto;
   overflow-y: scroll;
@@ -231,7 +265,7 @@ export default {
 
 .vehicle-box {
   width: 300px;
-  height: 300px;
+  height: 500px;
   margin: 10px auto;
   position: relative;
   perspective: 150rem;
@@ -240,7 +274,7 @@ export default {
 
 .vehicle-service-box {
   width: 250px;
-  height: 180px;
+  height: 300px;
   overflow: hidden;
   margin: 15px auto;
   background: #2e3440;
@@ -253,7 +287,7 @@ export default {
   left: 0;
   width: 100%;
   padding: 8px;
-  height: 300px;
+  height: 500px;
   overflow: hidden;
   position: absolute;
   transition: all 0.8s;

@@ -141,13 +141,21 @@ export default createStore({
       }
     },
     getContract: async ({ commit, state }) => {
+      let config = getConfig(process.env.NODE_ENV || "development");
       let contract = new nearAPI.Contract(
         state.accountDetails, // the account object that is connecting
-        "dev-1643565458345-58299177709187",
+        config.contractName,
         {
           // name of contract you're connecting to
           viewMethods: [], // view methods do not change state but usually return a value
-          changeMethods: ["addVehicle", "addService"], // change methods modify state
+          changeMethods: [
+            "add_vehicle",
+            "update_vehicle",
+            "delete_vehicle",
+            "add_vehicle_service",
+            "update_vehicle_service",
+            "delete_vehicle_service",
+          ], // change methods modify state
           sender: state.account, // account object to initialize and sign transactions.
         }
       );
@@ -163,14 +171,67 @@ export default createStore({
       commit("SET_ACCOUNT", account);
     },
     addVehicle: async ({ state, dispatch }, vehicleToAdd) => {
-      await state.contract.addVehicle({
+      if (state.contract === null) {
+        await dispatch("getContract");
+      }
+      let res = await state.contract.add_vehicle({
         year: vehicleToAdd.year,
         make: vehicleToAdd.make,
         model: vehicleToAdd.model,
         owner: vehicleToAdd.owner,
-        dateAcquired: vehicleToAdd.dateAcquired,
         vehicleNotes: vehicleToAdd.vehicleNotes,
+        dateAcquired: vehicleToAdd.dateAcquired,
       });
+
+      console.log("res from adding", res);
+
+      dispatch("_fetchState");
+    },
+    updateVehicle: async ({ state, dispatch }, vehicleToUpdate) => {
+      if (state.contract === null) {
+        await dispatch("getContract");
+      }
+      let res = await state.contract.update_vehicle(vehicleToUpdate);
+
+      console.log("res from updatinging", res);
+      setTimeout(() => {
+        dispatch("_fetchState");
+      }, 400);
+    },
+    updateVehicleService: async ({ state, dispatch }, serviceToUpdate) => {
+      if (state.contract === null) {
+        await dispatch("getContract");
+      }
+      let res = await state.contract.update_vehicle_service(serviceToUpdate);
+
+      console.log("res from updatinging servi", res);
+      setTimeout(() => {
+        dispatch("_fetchState");
+      }, 400);
+    },
+    deleteVehicle: async ({ state, dispatch }, vehicleToDelete) => {
+      if (state.contract === null) {
+        await dispatch("getContract");
+      }
+
+      let res = await state.contract.delete_vehicle({
+        vehicleId: vehicleToDelete.id,
+      });
+
+      console.log("res from deleting vehicle", res);
+
+      dispatch("_fetchState");
+    },
+    deleteService: async ({ state, dispatch }, serviceToDelete) => {
+      if (state.contract === null) {
+        await dispatch("getContract");
+      }
+
+      let res = await state.contract.delete_vehicle_service({
+        vehicleServiceId: serviceToDelete.id,
+      });
+
+      console.log("res from deleting service", res);
 
       dispatch("_fetchState");
     },
@@ -178,13 +239,17 @@ export default createStore({
       if (state.contract === null) {
         await dispatch("getContract");
       }
-      await state.contract.addService({
+      await state.contract.add_vehicle_service({
         vehicleId: serviceToAdd.vehicleId,
         serviceDate: serviceToAdd.serviceDate,
         serviceNotes: serviceToAdd.serviceNotes,
       });
 
-      dispatch("_fetchState");
+      console.log("start waiting");
+      setTimeout(() => {
+        console.log("finish waiting fetch state");
+        dispatch("_fetchState");
+      }, 300);
     },
     getAccountDetails: async ({ state }) => {
       state.accountDetails = await state.walletConnection.account();
@@ -193,8 +258,9 @@ export default createStore({
       // redirects user to wallet to authorize your dApp
       // this creates an access key that will be stored in the browser's local storage
       // access key can then be used to connect to NEAR and sign transactions via keyStore
+      let config = getConfig(process.env.NODE_ENV || "development");
       state.walletConnection.requestSignIn(
-        "dev-1643565458345-58299177709187", // contract requesting access
+        config.contractName, // contract requesting access
         "Vehicle History" // optional
         // "http://YOUR-URL.com/success", // optional
         // "http://YOUR-URL.com/failure" // optional
