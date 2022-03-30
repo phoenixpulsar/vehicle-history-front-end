@@ -1,6 +1,6 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="welcome">
+    <h1>Welcome</h1>
     <div class="svg">
       <img :src="mySVG" />
     </div>
@@ -11,7 +11,7 @@ import mySVG from "@/assets/SVG_CARS/CAR-03.svg";
 // @ is an alias to /src
 
 export default {
-  name: "About",
+  name: "Welcome",
   data() {
     return {
       mySVG,
@@ -22,6 +22,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.welcome {
+  display: grid;
+  place-items: center;
+}
 .svg {
   height: 300px;
   width: 300px;

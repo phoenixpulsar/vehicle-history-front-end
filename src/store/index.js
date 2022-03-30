@@ -174,14 +174,8 @@ export default createStore({
       if (state.contract === null) {
         await dispatch("getContract");
       }
-      let res = await state.contract.add_vehicle({
-        year: vehicleToAdd.year,
-        make: vehicleToAdd.make,
-        model: vehicleToAdd.model,
-        owner: vehicleToAdd.owner,
-        vehicleNotes: vehicleToAdd.vehicleNotes,
-        dateAcquired: vehicleToAdd.dateAcquired,
-      });
+      console.log("add ve", vehicleToAdd);
+      let res = await state.contract.add_vehicle(vehicleToAdd);
 
       console.log("res from adding", res);
 

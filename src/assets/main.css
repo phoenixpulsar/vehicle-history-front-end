@@ -41,6 +41,8 @@ img {
   padding: 10px;
   cursor: pointer;
   color: #2e3440;
+  font-weight: bold;
   text-align: center;
-  background: #bf616a;
+  background: #81a1c1;
+  border-radius: 16px;
 }

@@ -1,16 +1,21 @@
 <template>
   <div class="vehicle">
+    <h2 class="go-back-header" role="button" @click="goBack">
+      <fa icon="chevron-left" />
+      Back
+    </h2>
     <div class="left-column">
-      <div>Make:</div>
-      <div>Year:</div>
-      <div>Model:</div>
-      <div>Owner:</div>
-      <div>DateAcquired:</div>
-      <div>VehicleNotes:</div>
+      <div class="left-col-label">Make:</div>
+      <div class="left-col-label">Year:</div>
+      <div class="left-col-label">Model:</div>
+      <div class="left-col-label">Owner:</div>
+      <div class="left-col-label">DateAcquired:</div>
+      <div class="left-col-label">VehicleNotes:</div>
     </div>
     <div class="right-column">
       <div>
         <input
+          type="text"
           :value="vehicle?.make"
           @change="make = $event.target.value"
           placeholder="Make"
@@ -18,6 +23,7 @@
       </div>
       <div>
         <input
+          type="text"
           :value="vehicle?.year"
           @change="year = $event.target.value"
           placeholder="Year"
@@ -25,6 +31,7 @@
       </div>
       <div>
         <input
+          type="text"
           :value="vehicle?.model"
           @change="model = $event.target.value"
           placeholder="Model"
@@ -32,6 +39,7 @@
       </div>
       <div>
         <input
+          type="text"
           :value="vehicle?.owner"
           @change="owner = $event.target.value"
           placeholder="Owner"
@@ -39,13 +47,15 @@
       </div>
       <div>
         <input
+          type="text"
           :value="vehicle?.dateAcquired"
           @change="dateAcquired = $event.target.value"
           placeholder="Date Acquired"
         />
       </div>
       <div>
-        <input
+        <textarea
+          type="text"
           :value="vehicle?.vehicleNotes"
           @change="vehicleNotes = $event.target.value"
           placeholder="Notes"
@@ -96,6 +106,9 @@ export default {
       console.log("update", vehicleToUpdate);
       this.updateVehicle(vehicleToUpdate);
     },
+    goBack() {
+      this.$emit("closeEditVehicle");
+    },
   },
 };
 </script>
@@ -104,10 +117,16 @@ export default {
 <style scoped lang="scss">
 .vehicle {
   display: grid;
+
   padding-top: 5px;
   grid-template:
+    "goback      goback"
     "leftcolumn  rightcolumn"
     "addbtn      addbtn";
+}
+
+.vehicle::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .left-column {
@@ -121,5 +140,40 @@ export default {
 .add-vehicle-btn {
   grid-area: addbtn;
   margin: 20px;
+}
+
+input[type="text"] {
+  width: 100%;
+  background: #2e3440;
+  color: white;
+  padding: 6px 10px;
+  margin: 2px;
+  display: inline-block;
+  border: 1px solid #88c0d0;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+textarea[type="text"] {
+  width: 100%;
+  background: #2e3440;
+  color: white;
+  padding: 6px 10px;
+  margin: 2px;
+  display: inline-block;
+  border: 1px solid #88c0d0;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.left-col-label {
+  padding: 6px 9px;
+}
+
+.go-back-header {
+  color: white;
+  grid-area: goback;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 </style>

@@ -1,38 +1,36 @@
 <template>
   <div class="vehicle">
-    <img class="mySVG" :src="mySVG" />
+    <h2 class="go-back-header" role="button" @click="goBack">
+      <fa icon="chevron-left" />
+      Back
+    </h2>
+
     <div class="left-column">
-      <div class="makeNmodel">{{ vehicle.make }} {{ vehicle.model }}</div>
-      <div class="year">{{ vehicle.year }}</div>
+      <div class="makeNmodel">Your Request is Being Processed</div>
+      <div class="year"></div>
       <div class="divider"></div>
     </div>
 
     <div class="bottom-row">
-      <div>
-        <span class="left-label">Owner :</span>
-        {{ vehicle.owner }}
-      </div>
-      <div>
-        <span class="left-label">Acquired :</span> {{ vehicle.vehicleNotes }}
-      </div>
-      <div>
-        <span class="left-label">Notes :</span> {{ vehicle.dateAcquired }}
-      </div>
+      It might take up to a couple of min to see the changes reflected in the
+      blockchain.
     </div>
   </div>
 </template>
 
 <script>
-import mySVG from "@/assets/SVG_CARS/CAR-03.svg";
 export default {
-  name: "Vehicle",
+  name: "ActionMessage",
   props: {
-    vehicle: Object,
+    message: String,
   },
   data() {
-    return {
-      mySVG,
-    };
+    return {};
+  },
+  methods: {
+    goBack() {
+      this.$emit("closeMssg");
+    },
   },
 };
 </script>
@@ -40,12 +38,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .vehicle {
+  width: 300px;
+  margin: 0 auto;
   display: grid;
-  max-height: 200px;
+
   overflow: hidden;
   overflow-y: scroll;
   padding-top: 5px;
   grid-template:
+    "goback"
     "leftcolumn  "
     "bottomrow   ";
   background: #5e81ac;
@@ -110,5 +111,12 @@ export default {
 
 .left-label {
   color: #2e3440;
+}
+
+.go-back-header {
+  color: white;
+  grid-area: goback;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 </style>

@@ -15,14 +15,18 @@
 }
 
 #nav {
-  padding: 30px;
+  width: 300px;
+  margin: 15px auto;
+  padding: 5px;
+  text-align: center;
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: white;
+    text-decoration: none;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #ebcb8b;
     }
   }
 }
