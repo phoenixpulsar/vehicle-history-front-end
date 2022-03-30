@@ -5,6 +5,7 @@ const CONTRACT_NAME =
 function getConfig(env) {
   switch (env) {
     case "development":
+    case "production":
     case "testnet":
       return {
         networkId: "testnet",
