@@ -64,6 +64,7 @@ export default {
         vehicleNotes: this.vehicleNotes,
       };
       console.log("vehicletoadd", vehicleToAdd);
+      this.$emit("callToBlockOccurred");
       this.addVehicle(vehicleToAdd);
     },
     goBack() {

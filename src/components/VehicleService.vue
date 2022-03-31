@@ -2,7 +2,7 @@
   <div class="vehicle-service">
     <div class="ctrls">
       <fa icon="edit" class="edit-btn" @click="editService" />
-      <fa icon="trash" class="delete-btn" />
+      <fa icon="trash" class="delete-btn" @click="deleteService" />
     </div>
     <div class="left-column">
       <div class="service-label">Service Id:</div>
@@ -29,6 +29,9 @@ export default {
   methods: {
     editService() {
       this.$emit("editThisService", this.service.id);
+    },
+    deleteService() {
+      this.$emit("deleteThisService", this.service.id);
     },
   },
 };

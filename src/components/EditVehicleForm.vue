@@ -104,6 +104,7 @@ export default {
             : this.vehicle.dateAcquired,
       };
       console.log("update", vehicleToUpdate);
+      this.$emit("callToBlockOccurred");
       this.updateVehicle(vehicleToUpdate);
     },
     goBack() {

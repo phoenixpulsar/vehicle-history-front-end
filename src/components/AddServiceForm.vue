@@ -41,6 +41,7 @@ export default {
         serviceDate: this.serviceDate,
         serviceNotes: this.serviceNotes,
       };
+      this.$emit("callToBlockAddServiceFromForm");
       this.addService(serviceToAdd);
     },
   },

@@ -27,204 +27,230 @@
 
       <ActionMessage v-if="showMessage" @closeMssg="closeMssg"></ActionMessage>
 
-      <div
-        class="my-vehicles-header"
-        v-if="vehicleBeingEditId === null && !displayVehicleForm"
-      >
-        <h2 class="vehicles-header">Vehicles</h2>
+      <div v-if="showHudinimssg" class="hudini-mssg">
+        Close <fa icon="close" @click="closeMssgAndRefetchState" />
+        <p>
+          Your Request to update/add/delete a vehicle/service has been made. It
+          might take a bit to see the changes reflected
+        </p>
+      </div>
 
-        <div class="refresh-data" role="button" @click="refreshData">
-          <fa icon="refresh" /> Refresh Data
-        </div>
-        <!-- <div class="search-icon-container">
+      <div v-if="!showHudinimssg" class="hudini-front-stage">
+        <div
+          class="my-vehicles-header"
+          v-if="vehicleBeingEditId === null && !displayVehicleForm"
+        >
+          <h2 class="vehicles-header">Vehicles</h2>
+
+          <div class="refresh-data" role="button" @click="refreshData">
+            <fa icon="refresh" /> Refresh Data
+          </div>
+          <!-- <div class="search-icon-container">
           <fa icon="search" class="search-icon" />
         </div>
         <input type="text" class="search-input" placeholder="Search Vehicles" /> -->
-      </div>
+        </div>
 
-      <div
-        v-if="
-          GET_IS_USER_LOGGED_IN &&
-          GET_USER_ACCOUNT_DETAILS?.accountId === 'phoenixpulsar.testnet'
-        "
-        class="user-actions"
-      >
-        <button
-          v-if="vehicleBeingEditId === null && !displayVehicleForm"
-          class="btn"
-          @click="showVehicleForm()"
-        >
-          Add Vehicle
-        </button>
-      </div>
-
-      <div v-if="displayVehicleForm" class="vehicle-form">
-        <AddVehicleForm @closeAddVehicleForm="closeAddVehicleForm" />
-      </div>
-
-      <div class="vehicle-box-container" v-if="!displayVehicleForm">
         <div
-          v-for="(vehicle, index) in contractState.vehicles"
-          :key="index"
-          class="vehicle-box"
+          v-if="
+            GET_IS_USER_LOGGED_IN &&
+            GET_USER_ACCOUNT_DETAILS?.accountId === 'phoenixpulsar.testnet'
+          "
+          class="user-actions"
         >
-          <div
-            class="vehicle-box__side"
-            :class="[
-              isFrontSideShowing(index)
-                ? 'vehicle-box__side--front-intial'
-                : 'vehicle-box__side--front-rotate',
-            ]"
+          <button
+            v-if="vehicleBeingEditId === null && !displayVehicleForm"
+            class="btn"
+            @click="showVehicleForm()"
           >
-            <Vehicle
-              v-if="vehicleBeingEditId === null"
-              :vehicle="vehicle"
-            ></Vehicle>
+            Add Vehicle
+          </button>
+        </div>
 
-            <EditVehicleForm
-              @closeEditVehicle="closeEditVehicle"
-              v-if="vehicle.id === vehicleBeingEditId"
-              :vehicle="vehicle"
-            ></EditVehicleForm>
+        <div v-if="displayVehicleForm" class="vehicle-form">
+          <AddVehicleForm
+            @callToBlockOccurred="callToBlockOccurred"
+            @closeAddVehicleForm="closeAddVehicleForm"
+          />
+        </div>
 
+        <div class="vehicle-box-container" v-if="!displayVehicleForm">
+          <div
+            v-for="(vehicle, index) in contractState.vehicles"
+            :key="index"
+            class="vehicle-box"
+          >
             <div
-              class="vehicle-ctrls"
-              v-if="
-                vehicleBeingEditId === null || vehicleBeingEditId === vehicle.id
-              "
+              class="vehicle-box__side"
+              :class="[
+                isFrontSideShowing(index)
+                  ? 'vehicle-box__side--front-intial'
+                  : 'vehicle-box__side--front-rotate',
+              ]"
             >
-              <div class="left-ctrl" role="button" @click="showBack(index)">
-                <fa icon="gear" />
-                <br />
-                <span>Services</span>
-              </div>
+              <Vehicle
+                v-if="vehicleBeingEditId === null"
+                :vehicle="vehicle"
+              ></Vehicle>
+
+              <EditVehicleForm
+                @callToBlockOccurred="callToBlockOccurred"
+                @closeEditVehicle="closeEditVehicle"
+                v-if="vehicle.id === vehicleBeingEditId"
+                :vehicle="vehicle"
+              ></EditVehicleForm>
+
               <div
-                class="middle-ctrl"
-                role="button"
-                @click="openVehicleEditForm(vehicle)"
+                class="vehicle-ctrls"
+                v-if="
+                  vehicleBeingEditId === null ||
+                  vehicleBeingEditId === vehicle.id
+                "
               >
-                <fa icon="edit" />
-                <br />
-                <span>Edit</span>
-              </div>
-              <div
-                class="right-ctrl"
-                role="button"
-                @click="callDeleteVehicle(vehicle)"
-              >
-                <fa icon="trash" />
-                <br />
-                <span>Delete</span>
+                <div class="left-ctrl" role="button" @click="showBack(index)">
+                  <fa icon="gear" />
+                  <br />
+                  <span>Services</span>
+                </div>
+                <div
+                  class="middle-ctrl"
+                  role="button"
+                  @click="openVehicleEditForm(vehicle)"
+                >
+                  <fa icon="edit" />
+                  <br />
+                  <span>Edit</span>
+                </div>
+                <div
+                  class="right-ctrl"
+                  role="button"
+                  @click="callDeleteVehicle(vehicle)"
+                >
+                  <fa icon="trash" />
+                  <br />
+                  <span>Delete</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            class="vehicle-box__side"
-            :class="[
-              isFrontSideShowing(index)
-                ? 'vehicle-box__side--back-intial'
-                : 'vehicle-box__side--back-rotate',
-            ]"
-          >
-            <div class="vehicle-service-container">
-              <!-- could optimize here and just fetch service if user clicks see services -->
-              <div class="vehicle-service-ctrls">
-                <div class="makeNmodel">
+            <div
+              class="vehicle-box__side"
+              :class="[
+                isFrontSideShowing(index)
+                  ? 'vehicle-box__side--back-intial'
+                  : 'vehicle-box__side--back-rotate',
+              ]"
+            >
+              <div class="vehicle-service-container">
+                <!-- could optimize here and just fetch service if user clicks see services -->
+                <div class="vehicle-service-ctrls">
+                  <div class="makeNmodel">
+                    <div
+                      v-if="!showAddServiceForm && !showEditServiceForm"
+                      class="back-icon-service"
+                    >
+                      <span
+                        class="back-btn"
+                        role="button"
+                        @click="showFront(index)"
+                      >
+                        <fa icon="chevron-left" />
+                        <span> Back</span>
+                      </span>
+                      <span class="services-header"> Services </span>
+                      <span class="car-details-header">
+                        {{ vehicle.make }} {{ vehicle.model }} -
+                        {{ vehicle.year }}
+                      </span>
+                    </div>
+
+                    <div v-if="showAddServiceForm" class="back-icon-service">
+                      <span
+                        class="back-btn"
+                        role="button"
+                        @click="showAddServiceForm = !showAddServiceForm"
+                      >
+                        <fa icon="chevron-left" />
+                        <span> Back</span>
+                      </span>
+                      <span class="services-header">Add Service </span>
+                      <span class="car-details-header">
+                        {{ vehicle.make }} {{ vehicle.model }} -
+                        {{ vehicle.year }}
+                      </span>
+                    </div>
+
+                    <div v-if="showEditServiceForm" class="back-icon-service">
+                      <span
+                        class="back-btn"
+                        role="button"
+                        @click="showEditServiceForm = !showEditServiceForm"
+                      >
+                        <fa icon="chevron-left" />
+                        <span> Back </span>
+                      </span>
+                      <span class="services-header">Edit Service </span>
+                      <span class="car-details-header">
+                        {{ vehicle.make }} {{ vehicle.model }} -
+                        {{ vehicle.year }}
+                      </span>
+                    </div>
+                  </div>
+
                   <div
                     v-if="!showAddServiceForm && !showEditServiceForm"
-                    class="back-icon-service"
+                    class="show-service-form"
+                    role="button"
+                    @click="showAddServiceForm = !showAddServiceForm"
                   >
-                    <span
-                      class="back-btn"
-                      role="button"
-                      @click="showFront(index)"
-                    >
-                      <fa icon="chevron-left" />
-                      <span> Back</span>
-                    </span>
-                    <span class="services-header"> Services </span>
-                    <span class="car-details-header">
-                      {{ vehicle.make }} {{ vehicle.model }} -
-                      {{ vehicle.year }}
-                    </span>
+                    <fa icon="plus" />
+                    <span> Add Service</span>
                   </div>
 
-                  <div v-if="showAddServiceForm" class="back-icon-service">
-                    <span
-                      class="back-btn"
-                      role="button"
-                      @click="showAddServiceForm = !showAddServiceForm"
-                    >
-                      <fa icon="chevron-left" />
-                      <span> Back</span>
-                    </span>
-                    <span class="services-header">Add Service </span>
-                    <span class="car-details-header">
-                      {{ vehicle.make }} {{ vehicle.model }} -
-                      {{ vehicle.year }}
-                    </span>
-                  </div>
-
-                  <div v-if="showEditServiceForm" class="back-icon-service">
-                    <span
-                      class="back-btn"
-                      role="button"
-                      @click="showEditServiceForm = !showEditServiceForm"
-                    >
-                      <fa icon="chevron-left" />
-                      <span> Back </span>
-                    </span>
-                    <span class="services-header">Edit Service </span>
-                    <span class="car-details-header">
-                      {{ vehicle.make }} {{ vehicle.model }} -
-                      {{ vehicle.year }}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  v-if="!showAddServiceForm && !showEditServiceForm"
-                  class="show-service-form"
-                  role="button"
-                  @click="showAddServiceForm = !showAddServiceForm"
-                >
-                  <fa icon="plus" />
-                  <span> Add Service</span>
-                </div>
-
-                <div
-                  v-if="
-                    showAddServiceForm &&
-                    GET_IS_USER_LOGGED_IN &&
-                    GET_USER_ACCOUNT_DETAILS?.accountId ===
-                      'phoenixpulsar.testnet'
-                  "
-                >
-                  <AddServiceForm :vehicleId="vehicle.id" />
-                </div>
-              </div>
-
-              <div class="service" v-if="!showAddServiceForm">
-                <div
-                  v-for="(service, index) in getServices(vehicle.id)"
-                  :key="index"
-                  class="vehicle-service-box"
-                >
-                  <!-- service -->
-                  <div v-if="!showEditServiceForm">
-                    <VehicleService
-                      :service="service"
-                      @editThisService="editThisService"
-                    ></VehicleService>
-                  </div>
-
-                  <!-- edit service -->
                   <div
-                    v-if="showEditServiceForm && service.id === serviceToEditId"
+                    v-if="
+                      showAddServiceForm &&
+                      GET_IS_USER_LOGGED_IN &&
+                      GET_USER_ACCOUNT_DETAILS?.accountId ===
+                        'phoenixpulsar.testnet'
+                    "
                   >
-                    <EditVehicleServiceForm
-                      :service="service"
-                    ></EditVehicleServiceForm>
+                    <AddServiceForm
+                      @callToBlockAddServiceFromForm="
+                        callToBlockAddServiceFromForm
+                      "
+                      :vehicleId="vehicle.id"
+                    />
+                  </div>
+                </div>
+
+                <div class="service" v-if="!showAddServiceForm">
+                  <div
+                    v-for="(service, index) in getServices(vehicle.id)"
+                    :key="index"
+                    class="vehicle-service-box"
+                  >
+                    <!-- service -->
+                    <div v-if="!showEditServiceForm">
+                      <VehicleService
+                        :service="service"
+                        @editThisService="editThisService"
+                        @deleteThisService="deleteThisService"
+                      ></VehicleService>
+                    </div>
+
+                    <!-- edit service -->
+                    <div
+                      v-if="
+                        showEditServiceForm && service.id === serviceToEditId
+                      "
+                    >
+                      <EditVehicleServiceForm
+                        @callToBlockEditServiceFromForm="
+                          callToBlockEditServiceFromForm
+                        "
+                        :service="service"
+                      ></EditVehicleServiceForm>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -265,6 +291,7 @@ export default {
       serviceToEditId: null,
       showAddServiceForm: false,
       showEditServiceForm: false,
+      showHudinimssg: false,
       history: [],
       vehicles: [1],
       services: [],
@@ -302,11 +329,20 @@ export default {
       "getContract",
       "deleteVehicle",
       "deleteService",
+      "reFetchStateAction",
     ]),
+    closeMssgAndRefetchState() {
+      this.showHudinimssg = false;
+      this.reFetchStateAction();
+    },
     editThisService(serviceId) {
       console.log("service id", serviceId);
       this.serviceToEditId = serviceId;
       this.showEditServiceForm = true;
+    },
+    deleteThisService(serviceId) {
+      this.showHudinimssg = true;
+      this.deleteService(serviceId);
     },
     showMessagefn(mssg = "") {
       this.showMessage = true;
@@ -339,13 +375,12 @@ export default {
     showServiceForm() {
       this.displayServiceForm = true;
     },
-    callDeleteVehicle(vehicle) {
-      console.log("delete vehicle", vehicle);
-      this.deleteVehicle(vehicle);
+    hideServiceForm() {
+      this.displayServiceForm = false;
     },
-    callDeleteService(service) {
-      console.log("delete service", service);
-      this.deleteService(service);
+    callDeleteVehicle(vehicle) {
+      this.callToBlockOccurred();
+      this.deleteVehicle(vehicle);
     },
     signInUsingStore() {
       this.signIn();
@@ -359,8 +394,20 @@ export default {
     closeEditVehicle() {
       this.vehicleBeingEditId = null;
     },
+    callToBlockOccurred() {
+      this.closeEditVehicle();
+      this.showHudinimssg = true;
+    },
     closeAddVehicleForm() {
       this.displayVehicleForm = false;
+    },
+    callToBlockEditServiceFromForm() {
+      this.showEditServiceForm = false;
+      this.showHudinimssg = true;
+    },
+    callToBlockAddServiceFromForm() {
+      this.showAddServiceForm = false;
+      this.showHudinimssg = true;
     },
   },
 };
@@ -644,5 +691,10 @@ input[type="text"] {
   padding-top: 5px;
   text-align: right;
   cursor: pointer;
+}
+
+.hudini-mssg {
+  width: 300px;
+  margin: 0 auto;
 }
 </style>

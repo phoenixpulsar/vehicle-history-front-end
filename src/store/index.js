@@ -216,13 +216,13 @@ export default createStore({
 
       dispatch("_fetchState");
     },
-    deleteService: async ({ state, dispatch }, serviceToDelete) => {
+    deleteService: async ({ state, dispatch }, serviceToDeleteId) => {
       if (state.contract === null) {
         await dispatch("getContract");
       }
 
       let res = await state.contract.delete_vehicle_service({
-        vehicleServiceId: serviceToDelete.id,
+        vehicleServiceId: serviceToDeleteId,
       });
 
       console.log("res from deleting service", res);
@@ -264,6 +264,9 @@ export default createStore({
       state.walletConnection.signOut();
       state.isUserLoggedIn = false;
       state.accountDetails = false;
+    },
+    reFetchStateAction: ({ dispatch }) => {
+      dispatch("_fetchState");
     },
     checkIfUserLoggedIn: ({ state, dispatch }) => {
       if (!state.walletConnection.getAccountId()) {

@@ -59,6 +59,7 @@ export default {
             ? this.serviceNotes
             : this.service.serviceNotes,
       };
+      this.$emit("callToBlockEditServiceFromForm");
       this.updateVehicleService(serviceToUpdate);
     },
   },
