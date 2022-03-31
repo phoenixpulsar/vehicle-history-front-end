@@ -33,6 +33,9 @@
       >
         <h2 class="vehicles-header">Vehicles</h2>
 
+        <div class="refresh-data" role="button" @click="refreshData">
+          <fa icon="refresh" /> Refresh Data
+        </div>
         <!-- <div class="search-icon-container">
           <fa icon="search" class="search-icon" />
         </div>
@@ -126,12 +129,72 @@
             <div class="vehicle-service-container">
               <!-- could optimize here and just fetch service if user clicks see services -->
               <div class="vehicle-service-ctrls">
-                <button class="btn" @click="showFront(index)">
-                  Show Vehicle Details
-                </button>
+                <div class="makeNmodel">
+                  <div
+                    v-if="!showAddServiceForm && !showEditServiceForm"
+                    class="back-icon-service"
+                  >
+                    <span
+                      class="back-btn"
+                      role="button"
+                      @click="showFront(index)"
+                    >
+                      <fa icon="chevron-left" />
+                      <span> Back</span>
+                    </span>
+                    <span class="services-header"> Services </span>
+                    <span class="car-details-header">
+                      {{ vehicle.make }} {{ vehicle.model }} -
+                      {{ vehicle.year }}
+                    </span>
+                  </div>
+
+                  <div v-if="showAddServiceForm" class="back-icon-service">
+                    <span
+                      class="back-btn"
+                      role="button"
+                      @click="showAddServiceForm = !showAddServiceForm"
+                    >
+                      <fa icon="chevron-left" />
+                      <span> Back</span>
+                    </span>
+                    <span class="services-header">Add Service </span>
+                    <span class="car-details-header">
+                      {{ vehicle.make }} {{ vehicle.model }} -
+                      {{ vehicle.year }}
+                    </span>
+                  </div>
+
+                  <div v-if="showEditServiceForm" class="back-icon-service">
+                    <span
+                      class="back-btn"
+                      role="button"
+                      @click="showEditServiceForm = !showEditServiceForm"
+                    >
+                      <fa icon="chevron-left" />
+                      <span> Back </span>
+                    </span>
+                    <span class="services-header">Edit Service </span>
+                    <span class="car-details-header">
+                      {{ vehicle.make }} {{ vehicle.model }} -
+                      {{ vehicle.year }}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  v-if="!showAddServiceForm && !showEditServiceForm"
+                  class="show-service-form"
+                  role="button"
+                  @click="showAddServiceForm = !showAddServiceForm"
+                >
+                  <fa icon="plus" />
+                  <span> Add Service</span>
+                </div>
 
                 <div
                   v-if="
+                    showAddServiceForm &&
                     GET_IS_USER_LOGGED_IN &&
                     GET_USER_ACCOUNT_DETAILS?.accountId ===
                       'phoenixpulsar.testnet'
@@ -140,21 +203,30 @@
                   <AddServiceForm :vehicleId="vehicle.id" />
                 </div>
               </div>
-              <div
-                v-for="(service, index) in getServices(vehicle.id)"
-                :key="index"
-                class="vehicle-service-box"
-              >
-                <VehicleService :service="service"></VehicleService>
-                <div v-if="false">
-                  <EditVehicleServiceForm
-                    v-if="false === false"
-                    :service="service"
-                  ></EditVehicleServiceForm>
+
+              <div class="service" v-if="!showAddServiceForm">
+                <div
+                  v-for="(service, index) in getServices(vehicle.id)"
+                  :key="index"
+                  class="vehicle-service-box"
+                >
+                  <!-- service -->
+                  <div v-if="!showEditServiceForm">
+                    <VehicleService
+                      :service="service"
+                      @editThisService="editThisService"
+                    ></VehicleService>
+                  </div>
+
+                  <!-- edit service -->
+                  <div
+                    v-if="showEditServiceForm && service.id === serviceToEditId"
+                  >
+                    <EditVehicleServiceForm
+                      :service="service"
+                    ></EditVehicleServiceForm>
+                  </div>
                 </div>
-                <button class="btn" @click="callDeleteService(service)">
-                  Delete Service
-                </button>
               </div>
             </div>
           </div>
@@ -190,6 +262,9 @@ export default {
   },
   data() {
     return {
+      serviceToEditId: null,
+      showAddServiceForm: false,
+      showEditServiceForm: false,
       history: [],
       vehicles: [1],
       services: [],
@@ -217,6 +292,9 @@ export default {
     },
   },
   methods: {
+    refreshData() {
+      this.$router.go();
+    },
     ...mapActions([
       "initStore",
       "signIn",
@@ -225,6 +303,11 @@ export default {
       "deleteVehicle",
       "deleteService",
     ]),
+    editThisService(serviceId) {
+      console.log("service id", serviceId);
+      this.serviceToEditId = serviceId;
+      this.showEditServiceForm = true;
+    },
     showMessagefn(mssg = "") {
       this.showMessage = true;
       this.showMessageText = mssg;
@@ -345,6 +428,8 @@ export default {
   width: 280px;
   height: 260px;
   overflow: hidden;
+  background: #88c0d0;
+  border-radius: 16px;
   margin: 0px auto;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -367,12 +452,12 @@ export default {
 
 .vehicle-service-box {
   width: 250px;
-  height: 260px;
+  /* height: 260px; */
   overflow: hidden;
   margin: 15px auto;
-  background: #2e3440;
+  background: #88c0d0;
   backface-visibility: hidden;
-  outline: 1px solid #bf616a;
+  color: #3b4252;
 }
 
 .vehicle-box__side {
@@ -416,9 +501,8 @@ export default {
 .my-vehicles-header {
   display: grid;
   grid-template:
-    "vheading vheading"
-    "srchiconcontainer   srchinput"
-    /30px 1fr;
+    "vheading    refreshdata"
+    "srchiconcontainer   srchinput";
   width: 300px;
   margin: 0 auto;
 }
@@ -461,6 +545,12 @@ input[type="text"] {
   place-items: center;
   grid-template: "leftctrl middlectrl rightctrl";
   margin-top: 15px;
+}
+
+.service-ctrls {
+  display: grid;
+  place-items: center;
+  grid-template: "leftctrl middlectrl rightctrl";
 }
 
 .left-ctrl {
@@ -507,5 +597,52 @@ input[type="text"] {
 .user-val {
   color: #ebcb8b;
   margin-left: 5px;
+}
+
+.makeNmodel {
+  color: black;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.back-icon-service {
+  color: white;
+  font-weight: 300;
+  padding-bottom: 10px;
+}
+
+.services-header {
+  float: right;
+}
+
+.car-details-header {
+  float: right;
+  font-size: 18px;
+}
+
+.back-btn {
+  cursor: pointer;
+}
+
+.service-footer {
+  height: 50px;
+  background: red;
+}
+
+.show-service-form {
+  margin-top: 30px;
+  color: white;
+  text-align: center;
+  border: 1px solid white;
+  border-radius: 18px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.refresh-data {
+  grid-area: refreshdata;
+  padding-top: 5px;
+  text-align: right;
+  cursor: pointer;
 }
 </style>
