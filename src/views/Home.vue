@@ -28,11 +28,14 @@
       <ActionMessage v-if="showMessage" @closeMssg="closeMssg"></ActionMessage>
 
       <div v-if="showHudinimssg" class="hudini-mssg">
-        Close <fa icon="close" @click="closeMssgAndRefetchState" />
-        <p>
-          Your Request to update/add/delete a vehicle/service has been made. It
-          might take a bit to see the changes reflected
-        </p>
+        <div class="close-mssg" role="button" @click="closeMssgAndRefetchState">
+          Close <fa icon="close" />
+        </div>
+        <div class="mssg-body">
+          <p>
+            {{ mssgBody }}
+          </p>
+        </div>
       </div>
 
       <div v-if="!showHudinimssg" class="hudini-front-stage">
@@ -69,7 +72,7 @@
 
         <div v-if="displayVehicleForm" class="vehicle-form">
           <AddVehicleForm
-            @callToBlockOccurred="callToBlockOccurred"
+            @callToBlockAddVehicle="callToBlockAddVehicle"
             @closeAddVehicleForm="closeAddVehicleForm"
           />
         </div>
@@ -94,7 +97,7 @@
               ></Vehicle>
 
               <EditVehicleForm
-                @callToBlockOccurred="callToBlockOccurred"
+                @callToBlockEditVehicle="callToBlockEditVehicle"
                 @closeEditVehicle="closeEditVehicle"
                 v-if="vehicle.id === vehicleBeingEditId"
                 :vehicle="vehicle"
@@ -301,6 +304,7 @@ export default {
       vehicleBeingEditId: null,
       showMessage: false,
       showMessageText: null,
+      mssgBody: "",
     };
   },
   mounted() {
@@ -333,6 +337,7 @@ export default {
     ]),
     closeMssgAndRefetchState() {
       this.showHudinimssg = false;
+      this.mssgBody = "";
       this.reFetchStateAction();
     },
     editThisService(serviceId) {
@@ -342,6 +347,8 @@ export default {
     },
     deleteThisService(serviceId) {
       this.showHudinimssg = true;
+      this.mssgBody =
+        "Your Request to delete a Service has been made. It might take a bit to see the changes reflected";
       this.deleteService(serviceId);
     },
     showMessagefn(mssg = "") {
@@ -379,7 +386,9 @@ export default {
       this.displayServiceForm = false;
     },
     callDeleteVehicle(vehicle) {
-      this.callToBlockOccurred();
+      this.showHudinimssg = true;
+      this.mssgBody =
+        "Your Request to delete a Vehicle has been made. It might take a bit to see the changes reflected";
       this.deleteVehicle(vehicle);
     },
     signInUsingStore() {
@@ -397,17 +406,35 @@ export default {
     callToBlockOccurred() {
       this.closeEditVehicle();
       this.showHudinimssg = true;
+      this.mssgBody =
+        "Your Request to delete a Service has been made. It might take a bit to see the changes reflected";
     },
     closeAddVehicleForm() {
       this.displayVehicleForm = false;
     },
+    callToBlockAddVehicle() {
+      this.closeAddVehicleForm();
+      this.showHudinimssg = true;
+      this.mssgBody =
+        "Your Request to add a Vehicle has been made. It might take a bit to see the changes reflected";
+    },
+    callToBlockEditVehicle() {
+      this.closeEditVehicle();
+      this.showHudinimssg = true;
+      this.mssgBody =
+        "Your Request to edit a Vehicle has been made. It might take a bit to see the changes reflected";
+    },
     callToBlockEditServiceFromForm() {
       this.showEditServiceForm = false;
       this.showHudinimssg = true;
+      this.mssgBody =
+        "Your Request to edit a Service has been made. It might take a bit to see the changes reflected";
     },
     callToBlockAddServiceFromForm() {
       this.showAddServiceForm = false;
       this.showHudinimssg = true;
+      this.mssgBody =
+        "Your Request to add a Servive has been made. It might take a bit to see the changes reflected";
     },
   },
 };
@@ -695,6 +722,17 @@ input[type="text"] {
 
 .hudini-mssg {
   width: 300px;
-  margin: 0 auto;
+
+  margin: 80px auto;
+}
+
+.close-mssg {
+  text-align: right;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.mssg-body {
+  font-size: 18px;
 }
 </style>

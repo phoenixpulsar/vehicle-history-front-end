@@ -48,16 +48,16 @@
       <div>
         <input
           type="text"
-          :value="vehicle?.dateAcquired"
-          @change="dateAcquired = $event.target.value"
+          :value="vehicle?.vehicleNotes"
+          @change="vehicleNotes = $event.target.value"
           placeholder="Date Acquired"
         />
       </div>
       <div>
         <textarea
           type="text"
-          :value="vehicle?.vehicleNotes"
-          @change="vehicleNotes = $event.target.value"
+          :value="vehicle?.dateAcquired"
+          @change="dateAcquired = $event.target.value"
           placeholder="Notes"
         />
       </div>
@@ -104,7 +104,7 @@ export default {
             : this.vehicle.dateAcquired,
       };
       console.log("update", vehicleToUpdate);
-      this.$emit("callToBlockOccurred");
+      this.$emit("callToBlockEditVehicle");
       this.updateVehicle(vehicleToUpdate);
     },
     goBack() {
