@@ -12,15 +12,12 @@
       <h1 class="header">Vehicles on the Block</h1>
       <div class="welcomeNlogo user-actions">
         <div class="welcome-user">
-          <fa icon="user" />
           <span class="user-val">
             {{ GET_USER_ACCOUNT_DETAILS?.accountId }}</span
           >
         </div>
 
         <div class="sign-out-user" role="button" @click="signOutUsingStore()">
-          <fa icon="arrow-right-from-bracket" />
-
           <span>Sign Out</span>
         </div>
       </div>
@@ -29,7 +26,7 @@
 
       <div v-if="showHudinimssg" class="hudini-mssg">
         <div class="close-mssg" role="button" @click="closeMssgAndRefetchState">
-          Close <fa icon="close" />
+          Close
         </div>
         <div class="mssg-body">
           <p>
@@ -46,7 +43,7 @@
           <h2 class="vehicles-header">Vehicles</h2>
 
           <div class="refresh-data" role="button" @click="refreshData">
-            <fa icon="refresh" /> Refresh Data
+            Refresh Data
           </div>
           <!-- <div class="search-icon-container">
           <fa icon="search" class="search-icon" />
@@ -111,8 +108,6 @@
                 "
               >
                 <div class="left-ctrl" role="button" @click="showBack(index)">
-                  <fa icon="gear" />
-                  <br />
                   <span>Services</span>
                 </div>
                 <div
@@ -120,8 +115,6 @@
                   role="button"
                   @click="openVehicleEditForm(vehicle)"
                 >
-                  <fa icon="edit" />
-                  <br />
                   <span>Edit</span>
                 </div>
                 <div
@@ -129,8 +122,6 @@
                   role="button"
                   @click="callDeleteVehicle(vehicle)"
                 >
-                  <fa icon="trash" />
-                  <br />
                   <span>Delete</span>
                 </div>
               </div>
@@ -156,7 +147,6 @@
                         role="button"
                         @click="showFront(index)"
                       >
-                        <fa icon="chevron-left" />
                         <span> Back</span>
                       </span>
                       <span class="services-header"> Services </span>
@@ -172,7 +162,6 @@
                         role="button"
                         @click="showAddServiceForm = !showAddServiceForm"
                       >
-                        <fa icon="chevron-left" />
                         <span> Back</span>
                       </span>
                       <span class="services-header">Add Service </span>
@@ -188,7 +177,6 @@
                         role="button"
                         @click="showEditServiceForm = !showEditServiceForm"
                       >
-                        <fa icon="chevron-left" />
                         <span> Back </span>
                       </span>
                       <span class="services-header">Edit Service </span>
@@ -205,7 +193,6 @@
                     role="button"
                     @click="showAddServiceForm = !showAddServiceForm"
                   >
-                    <fa icon="plus" />
                     <span> Add Service</span>
                   </div>
 
